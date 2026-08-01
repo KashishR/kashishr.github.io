@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Curriculum Vitae — Kashish Ramrakhiani, UX Designer based in Casablanca." />
+  <title>CV — Kashish Ramrakhiani</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,200;9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root {
+      --cv-line: #E6DFD4;
+    }
+
+    .cv-body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+    }
+
+    /* ── Sticky top bar: Back link + Download ─────────────────── */
+    .cv-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem clamp(1.5rem, 6vw, 6rem);
+      background: rgba(250, 247, 242, 0.82);
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--cv-line);
+    }
+
+    .cv-back {
+      color: var(--accent);
+      font-weight: 500;
+      font-size: 0.95rem;
+      letter-spacing: 0.01em;
+      position: relative;
+    }
+    .cv-back::after {
+      content: "";
+      position: absolute;
+      left: 0; bottom: -3px;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.3s var(--ease);
+    }
+    .cv-back:hover::after,
+    .cv-back:focus-visible::after { width: 100%; }
+
+    .cv-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+      border: 1.5px solid var(--accent);
+      border-radius: 999px;
+      padding: 0.55rem 1.2rem;
+      transition: background 0.3s var(--ease), color 0.3s var(--ease), transform 0.3s var(--ease);
+    }
+    .cv-download:hover,
+    .cv-download:focus-visible {
+      background: var(--accent);
+      color: var(--bg);
+      transform: translateY(-1px);
+    }
+    .cv-download svg { width: 15px; height: 15px; }
+
+    /* ── Page shell ───────────────────────────────────────────── */
+    .cv-page {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 6vw, 4rem) 5rem;
+    }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    .cv-header { margin-bottom: clamp(3rem, 7vw, 5rem); }
+    .cv-header h1 {
+      font-weight: 200;
+      font-size: clamp(2.8rem, 9vw, 5.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+    .cv-role {
+      margin-top: 1.1rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .cv-contact {
+      margin-top: 1.6rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.4rem;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+    .cv-contact a {
+      color: var(--muted);
+      position: relative;
+      transition: color 0.3s var(--ease);
+    }
+    .cv-contact a:hover { color: var(--accent); }
+    .cv-contact .dot { color: var(--cv-line); }
+
+    /* ── Summary lede ─────────────────────────────────────────── */
+    .cv-lede {
+      font-weight: 300;
+      font-size: clamp(1.25rem, 3.2vw, 1.85rem);
+      line-height: 1.45;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      max-width: 32ch;
+      margin-bottom: clamp(3rem, 7vw, 5rem);
+    }
+    .cv-lede em { color: var(--accent); font-style: italic; }
+
+    /* ── Section grid (label left, content right) ─────────────── */
+    .cv-section {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: clamp(1.5rem, 4vw, 3.5rem);
+      padding: clamp(2.2rem, 5vw, 3rem) 0;
+      border-top: 1px solid var(--cv-line);
+    }
+    .cv-label {
+      font-size: 0.76rem;
+      font-weight: 500;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding-top: 0.4rem;
+    }
+
+    /* ── Skills / tags ────────────────────────────────────────── */
+    .cv-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+    .cv-tag {
+      font-size: 0.9rem;
+      color: var(--ink);
+      background: var(--accent-soft);
+      border: 1px solid rgba(193, 68, 14, 0.2);
+      border-radius: 999px;
+      padding: 0.4rem 0.95rem;
+      transition: transform 0.3s var(--ease);
+    }
+    .cv-tag:hover { transform: translateY(-2px); }
+
+    /* ── Tools grid with categories ───────────────────────────── */
+    .cv-tools-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .cv-tool-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .cv-tool-category {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Interests inline ─────────────────────────────────────── */
+    .cv-interests {
+      font-size: 1rem;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* ── Experience ───────────────────────────────────────────── */
+    .cv-job { margin-bottom: 2.4rem; }
+    .cv-job:last-child { margin-bottom: 0; }
+    .cv-job__head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.3rem 1rem;
+    }
+    .cv-job__title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .cv-job__when {
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .cv-job__org {
+      margin-top: 0.25rem;
+      font-size: 0.98rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .cv-job__org span { color: var(--muted); font-weight: 400; }
+    .cv-job ul {
+      margin-top: 0.95rem;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .cv-job li {
+      position: relative;
+      padding-left: 1.3rem;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #3A3530;
+    }
+    .cv-job li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.65em;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.55;
+    }
+
+    /* ── Education / list-style entries ───────────────────────── */
+    .cv-entry { margin-bottom: 1.5rem; }
+    .cv-entry:last-child { margin-bottom: 0; }
+    .cv-entry__title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .cv-entry__meta {
+      margin-top: 0.2rem;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+    .cv-entry__meta em { color: var(--accent); font-style: normal; font-weight: 500; }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    .cv-foot {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 2.5rem clamp(1.5rem, 6vw, 4rem) 4rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-top: 1px solid var(--cv-line);
+    }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 680px) {
+      .cv-section {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .cv-label { padding-top: 0; }
+      .cv-job__when { width: 100%; }
+    }
+  </style>
+</head>
+<body class="cv-body">
+
+  <div class="cv-bar">
+    <a href="index.html" class="cv-back">← Back</a>
+    <a href="KashishRamrakhiani_CV.pdf" class="cv-download" download="KashishRamrakhiani_CV.pdf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Download PDF
+    </a>
+  </div>
+
+  <main class="cv-page">
+
+    <!-- ── Header ── -->
+    <header class="cv-header">
+      <h1>Kashish<br />Ramrakhiani</h1>
+      <p class="cv-role">UX Designer · Casablanca, Morocco</p>
+      <div class="cv-contact">
+        <a href="mailto:kashishr1603@gmail.com">kashishr1603@gmail.com</a>
+        <span class="dot">·</span>
+        <a href="tel:+212669972532">+212 669 972 532</a>
+        <span class="dot">·</span>
+        <a href="https://www.linkedin.com/in/kashishramrakhiani/" target="_blank" rel="noopener">LinkedIn</a>
+        <span class="dot">·</span>
+        <a href="index.html">Portfolio</a>
+      </div>
+    </header>
+
+    <!-- ── Summary ── -->
+    <p class="cv-lede">
+      User Experience Designer passionate about creating intuitive, <em>user-centered digital experiences</em>. I combine thoughtful design, strong technical skills, and AI-powered workflows to deliver impactful solutions, and thrive in collaborative, cross-functional teams.
+    </p>
+
+    <!-- ── Design Skills ── -->
+    <section class="cv-section">
+      <p class="cv-label">Design Skills</p>
+      <div class="cv-tags">
+        <span class="cv-tag">UX Design &amp; Research</span>
+        <span class="cv-tag">Usability Testing</span>
+        <span class="cv-tag">User-Centric Design</span>
+        <span class="cv-tag">Speculative Design</span>
+        <span class="cv-tag">Accessibility in Design</span>
+        <span class="cv-tag">Wireframing &amp; Prototyping</span>
+        <span class="cv-tag">Design Thinking</span>
+        <span class="cv-tag">Facilitating Creative Sessions</span>
+      </div>
+    </section>
+
+    <!-- ── Experience ── -->
+    <section class="cv-section">
+      <p class="cv-label">Experience</p>
+      <div>
+
+        <article class="cv-job">
+          <div class="cv-job__head">
+            <h3 class="cv-job__title">UX/UI Designer</h3>
+            <span class="cv-job__when">2024 — Present</span>
+          </div>
+          <p class="cv-job__org">BCG <span>· Casablanca, Morocco</span></p>
+          <ul>
+            <li>Led UX/UI design for different streams in two fintech projects with global teams, improving digital experiences to increase customer acquisition and retention.</li>
+            <li>Integrated AI features into data-driven digital products, making advanced technology easy for users to understand and use.</li>
+            <li>Designed AI-powered dashboards to help leadership track KPIs and make informed decisions.</li>
+            <li>Used modern AI design tools to speed up the design process and improve outcomes.</li>
+            <li>Working closely with consultants, engineers, and client teams across international projects.</li>
+          </ul>
+        </article>
+
+        <article class="cv-job">
+          <div class="cv-job__head">
+            <h3 class="cv-job__title">UX Designer (VR)</h3>
+            <span class="cv-job__when">Jun — Sept 2023</span>
+          </div>
+          <p class="cv-job__org">SenseGlove <span>· Delft, Netherlands</span></p>
+          <ul>
+            <li>Engineered and iterated prototypes for rapid testing and calibration of a VR system, achieving a 50% reduction in time to completion.</li>
+            <li>Integrated and tested various haptic feedback mechanisms, optimizing user experience during system calibration.</li>
+            <li>Elevated ease-of-use rating from 2–3 to 5–7 on a 7-point scale.</li>
+          </ul>
+        </article>
+
+        <article class="cv-job">
+          <div class="cv-job__head">
+            <h3 class="cv-job__title">UX Designer</h3>
+            <span class="cv-job__when">Aug 2021 — Aug 2022</span>
+          </div>
+          <p class="cv-job__org">Deloitte Digital <span>· Mumbai, India</span></p>
+          <ul>
+            <li>Conducted comprehensive journey mapping for digital legal platforms for a Canadian multinational.</li>
+            <li>Designed wireframes and prototypes ensuring seamless user interaction.</li>
+            <li>Implemented WCAG accessibility guidelines, increasing user retention by 18%.</li>
+          </ul>
+        </article>
+
+        <article class="cv-job">
+          <div class="cv-job__head">
+            <h3 class="cv-job__title">UX Designer (Intern)</h3>
+            <span class="cv-job__when">2019 — 2020</span>
+          </div>
+          <p class="cv-job__org">The Gamification Company <span>· Pune, India</span></p>
+          <ul>
+            <li>Leveraged the Octalysis framework to enable learning via gamification.</li>
+            <li>Spearheaded concept creation for RFPs, driving innovative gamified experiences.</li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ── Education ── -->
+    <section class="cv-section">
+      <p class="cv-label">Education</p>
+      <div>
+        <div class="cv-entry">
+          <p class="cv-entry__title">M.Sc. Design for Interaction</p>
+          <p class="cv-entry__meta"><em>TU Delft</em> · 2022 — 2024</p>
+        </div>
+        <div class="cv-entry">
+          <p class="cv-entry__title">B.Des Humanizing Technology</p>
+          <p class="cv-entry__meta"><em>NMIMS School of Design</em> · 2017 — 2021</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Community & Leadership ── -->
+    <section class="cv-section">
+      <p class="cv-label">Community &amp; Leadership</p>
+      <div>
+        <div class="cv-entry">
+          <p class="cv-entry__title">Erasmus Student Network — Board Member</p>
+          <p class="cv-entry__meta">Delft · 2023 — 2024</p>
+        </div>
+        <div class="cv-entry">
+          <p class="cv-entry__title">(Re)Generation Erasmus — Sustainability Ambassador</p>
+          <p class="cv-entry__meta">Europe · 2024</p>
+        </div>
+        <div class="cv-entry">
+          <p class="cv-entry__title">Cases on Tour — Led 27-student cross-functional team</p>
+          <p class="cv-entry__meta">Delft · 2022</p>
+        </div>
+        <div class="cv-entry">
+          <p class="cv-entry__title">Infuse — Board Member, Design for Interaction community</p>
+          <p class="cv-entry__meta">Delft · 2022</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Tools ── -->
+    <section class="cv-section">
+      <p class="cv-label">Tools</p>
+      <div class="cv-tools-grid">
+        <div class="cv-tool-group">
+          <span class="cv-tool-category">AI & Design Tools</span>
+          <div class="cv-tags">
+            <span class="cv-tag">Claude</span>
+            <span class="cv-tag">Figma Make</span>
+            <span class="cv-tag">Lovable</span>
+            <span class="cv-tag">Spline</span>
+            <span class="cv-tag">Midjourney</span>
+          </div>
+        </div>
+        <div class="cv-tool-group">
+          <span class="cv-tool-category">Design & Collaboration</span>
+          <div class="cv-tags">
+            <span class="cv-tag">Figma</span>
+            <span class="cv-tag">Miro</span>
+            <span class="cv-tag">Notion</span>
+          </div>
+        </div>
+        <div class="cv-tool-group">
+          <span class="cv-tool-category">Adobe Suite</span>
+          <div class="cv-tags">
+            <span class="cv-tag">Illustrator</span>
+            <span class="cv-tag">InDesign</span>
+            <span class="cv-tag">After Effects</span>
+            <span class="cv-tag">Premiere Pro</span>
+            <span class="cv-tag">Photoshop</span>
+            <span class="cv-tag">XD</span>
+          </div>
+        </div>
+        <div class="cv-tool-group">
+          <span class="cv-tool-category">3D & Fabrication</span>
+          <div class="cv-tags">
+            <span class="cv-tag">Unity</span>
+            <span class="cv-tag">Fusion 360</span>
+            <span class="cv-tag">Slicer</span>
+            <span class="cv-tag">Cura</span>
+            <span class="cv-tag">Blender</span>
+          </div>
+        </div>
+        <div class="cv-tool-group">
+          <span class="cv-tool-category">Code</span>
+          <div class="cv-tags">
+            <span class="cv-tag">HTML</span>
+            <span class="cv-tag">CSS</span>
+            <span class="cv-tag">P5.js</span>
+            <span class="cv-tag">JavaScript</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Interests ── -->
+    <section class="cv-section">
+      <p class="cv-label">Interests</p>
+      <p class="cv-interests">Yoga · Badminton · Travel · Healthy Lifestyle · Movie Analysis · Social Activities</p>
+    </section>
+
+  </main>
+
+  <footer class="cv-foot">
+    <span>© <span id="cv-year"></span> Kashish Ramrakhiani</span>
+    <span>Made between Mumbai · Amsterdam · Casablanca</span>
+  </footer>
+
+  <script>
+    document.getElementById('cv-year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1350 @@
+/* ====================================================================
+   Kashish Ramrakhiani — Portal portfolio
+   Modern editorial · DM Sans · ivory / near-black / terracotta
+   ==================================================================== */
+:root {
+  --bg: #FAF7F2;          /* ivory / cream */
+  --card: #F2ECE1;        /* warm off-white for cards */
+  --ink: #1A1A1A;         /* near-black text */
+  --accent: #C1440E;      /* primary terracotta - kept for backwards compatibility */
+  --accent-soft: rgba(193, 68, 14, 0.12);
+  --muted: #6F665B;       /* warm grey, secondary text */
+  --brown: #9C6B4F;       /* muted clay (third region tint) */
+  --line: rgba(26, 26, 26, 0.14);
+
+  /* Single-accent system — terracotta only (outside the hero contour art).
+     The old blue/green/gold tokens now resolve to terracotta so every
+     reference (nav hover, utility classes, project-page labels) stays
+     cohesive without touching each call site. */
+  --terracotta: #C1440E;
+  --deep-blue: #C1440E;
+  --sage-green: #C1440E;
+  --gold: #C1440E;
+
+  --font: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --max: 1200px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* subtle paper grain */
+body::after {
+  content: "";
+  position: fixed; inset: 0; z-index: 60; pointer-events: none;
+  opacity: 0.045; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection { background: var(--accent); color: var(--bg); }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+em { font-style: italic; color: var(--accent); }
+
+/* Color utility classes for 4-color system */
+.deep-blue { color: var(--deep-blue) !important; }
+.sage-green { color: var(--sage-green) !important; }
+.gold { color: var(--gold) !important; }
+.terracotta { color: var(--terracotta) !important; }
+
+h1, h2, h3 { font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; }
+
+.container { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: clamp(1.25rem, 5vw, 4rem); }
+
+/* ====================================================================
+   Cursor glow
+   ==================================================================== */
+.cursor-glow {
+  position: fixed; top: 0; left: 0;
+  width: 460px; height: 460px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(193, 68, 14, 0.14), transparent 60%);
+  transform: translate(-50%, -50%);
+  pointer-events: none; z-index: 1; opacity: 0;
+  transition: opacity 0.4s ease; will-change: transform; mix-blend-mode: multiply;
+}
+@media (hover: hover) and (pointer: fine) { .cursor-glow.active { opacity: 1; } }
+
+/* ====================================================================
+   Top nav
+   ==================================================================== */
+.topnav {
+  position: fixed; inset: 0 0 auto 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem clamp(1.25rem, 5vw, 4rem);
+  opacity: 0; transform: translateY(-12px); pointer-events: none;
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+body.entered .topnav { opacity: 1; transform: none; pointer-events: auto; }
+.topnav__logo { font-weight: 700; font-size: 1.1rem; color: var(--ink); letter-spacing: -0.01em; }
+.topnav__logo span { color: var(--accent); }
+.topnav__links { display: flex; gap: 1.6rem; }
+.topnav__links a {
+  font-size: 0.78rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink); position: relative;
+}
+.topnav__links a::after {
+  content: ""; position: absolute; left: 0; bottom: -4px; width: 0; height: 1.5px;
+  background: var(--accent); transition: width 0.3s var(--ease);
+}
+.topnav__links a:hover::after { width: 100%; }
+
+/* Cycling nav link colors on hover */
+.topnav__links a:nth-child(1):hover::after { background: var(--deep-blue); }
+.topnav__links a:nth-child(2):hover::after { background: var(--sage-green); }
+.topnav__links a:nth-child(3):hover::after { background: var(--gold); }
+.topnav__links a:nth-child(4):hover::after { background: var(--terracotta); }
+
+/* ====================================================================
+   HERO — Clean organic topographic design
+   ==================================================================== */
+/* Hero is a FIXED full-screen overlay sitting on top of the portfolio.
+   The world scrolls underneath; the hero is the curtain over it. */
+.hero {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #FAF7F2;
+  overflow: hidden;
+  z-index: 100;
+  transition: opacity 0.45s ease;
+}
+
+/* Dismissed: the curtain lifts — hero fades out and lets clicks through. */
+.hero.dismissed {
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.entered {
+  overflow-y: auto !important;
+}
+
+body.entered.hero-locked {
+  overflow: hidden !important;
+}
+
+.hero__container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Portal zoom — the artwork and name rush toward you and fade as you
+   fly INTO the screen. Fast, accelerating ease (~800ms). */
+.hero__container.zooming .hero__content {
+  transform: scale(8);
+  opacity: 0;
+}
+
+/* Colourful background artwork */
+.hero__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: none;
+  z-index: 1;
+  pointer-events: none;
+  transform-origin: center center;
+  transition: transform 0.8s cubic-bezier(0.7, 0, 0.84, 0), opacity 0.8s cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+/* Each contour line drifts/sways on its own — gentle, meditative, and
+   desynchronised via varied durations (6–12s) and negative delays. Each
+   path transforms around its own centre so the motion feels organic. */
+.hero__line {
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: transform;
+  animation: heroDriftA 9s ease-in-out infinite;
+}
+
+/* duration + movement-variant + offset buckets, spread across all paths */
+.hero__line:nth-child(8n + 1) { animation-name: heroDriftA; animation-duration: 6s;  animation-delay: -1.0s; }
+.hero__line:nth-child(8n + 2) { animation-name: heroDriftB; animation-duration: 7.5s; animation-delay: -3.2s; }
+.hero__line:nth-child(8n + 3) { animation-name: heroDriftC; animation-duration: 9s;  animation-delay: -2.1s; }
+.hero__line:nth-child(8n + 4) { animation-name: heroDriftD; animation-duration: 10.5s; animation-delay: -4.4s; }
+.hero__line:nth-child(8n + 5) { animation-name: heroDriftB; animation-duration: 8s;  animation-delay: -0.7s; }
+.hero__line:nth-child(8n + 6) { animation-name: heroDriftA; animation-duration: 11s; animation-delay: -5.6s; }
+.hero__line:nth-child(8n + 7) { animation-name: heroDriftD; animation-duration: 12s; animation-delay: -2.8s; }
+.hero__line:nth-child(8n + 8) { animation-name: heroDriftC; animation-duration: 9.5s; animation-delay: -6.3s; }
+
+@keyframes heroDriftA {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50%      { transform: translate(10px, -8px) rotate(0.4deg) scale(1.012); }
+}
+@keyframes heroDriftB {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50%      { transform: translate(-12px, 6px) rotate(-0.35deg) scale(1.015); }
+}
+@keyframes heroDriftC {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50%      { transform: translate(7px, 11px) rotate(0.5deg) scale(0.99); }
+}
+@keyframes heroDriftD {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50%      { transform: translate(-8px, -10px) rotate(-0.45deg) scale(1.008); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__line { animation: none; }
+}
+
+/* Portal zoom — the artwork and name rush toward you and fade as you
+   fly INTO the screen. Fast, accelerating ease (~800ms). */
+.hero__container.zooming .hero__bg {
+  transform: scale(8);
+  opacity: 0;
+}
+
+/* Portal flash — a burst of cream light blooming from the centre as you
+   pass through the portal, then fading to reveal the Story section. */
+.portal-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 50%,
+    #FAF7F2 0%, #FAF7F2 35%, rgba(250, 247, 242, 0) 72%);
+  opacity: 0;
+  transform: scale(0.15);
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+/* Flash blooming in — expands and brightens to fully cover the screen. */
+.portal-flash.flash-in {
+  opacity: 1;
+  transform: scale(3.2);
+  transition: opacity 0.55s ease-in, transform 0.7s cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+/* Flash fading out — dissolves to reveal the world you've arrived in. */
+.portal-flash.flash-out {
+  opacity: 0;
+  transform: scale(3.2);
+  transition: opacity 0.55s ease-out;
+}
+
+/* Main content */
+.hero__content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  transition: transform 0.8s cubic-bezier(0.7, 0, 0.84, 0), opacity 0.8s cubic-bezier(0.7, 0, 0.84, 0);
+  transform-origin: center center;
+}
+
+.hero__name {
+  font-weight: 250;
+  font-size: clamp(3rem, 10vw, 7rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 1.5rem 0;
+}
+
+.hero__tagline {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 2rem 0;
+  opacity: 0.8;
+}
+
+.hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.3s var(--ease);
+  opacity: 0.6;
+}
+
+.hero__cta:hover,
+.hero__cta:focus-visible {
+  color: var(--accent);
+  opacity: 1;
+  outline: none;
+}
+
+.hero__cta__arrow {
+  display: inline-block;
+  font-size: 1.1em;
+  letter-spacing: 0;
+  animation: ctaArrowBob 2.2s var(--ease) infinite;
+}
+@keyframes ctaArrowBob {
+  0%, 100% { transform: translateY(-1px); opacity: 0.5; }
+  50% { transform: translateY(3px); opacity: 1; }
+}
+
+/* Responsive adjustments for hand-drawn organic design */
+@media (max-width: 768px) {
+  .hero__name {
+    font-size: clamp(2.5rem, 9vw, 4.5rem);
+    margin-bottom: 1.2rem;
+  }
+
+  .hero__tagline {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 1.8rem;
+  }
+
+  .hero__cta {
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero__name {
+    font-size: clamp(2.2rem, 8vw, 3.5rem);
+    margin-bottom: 1rem;
+  }
+
+  .hero__tagline {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero__cta {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+  }
+}
+
+/* ====================================================================
+   World
+   ==================================================================== */
+.world {
+  position: relative;
+  z-index: 1;
+  background: #FAF7F2;
+}
+.section { padding: clamp(5rem, 12vh, 9rem) 0; position: relative; }
+.section__index { font-size: 0.76rem; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.3rem; }
+.section__title { font-weight: 600; font-size: clamp(2rem, 5.5vw, 3.8rem); color: var(--ink); }
+
+
+
+
+
+
+
+/* CV link styling */
+.cv-btn {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  color: var(--accent);
+  text-decoration: none;
+}
+.cv-btn:hover, .cv-btn:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+
+/* flight route — stroke-dash drawn progressively by JS as you scroll */
+.route {
+  stroke: url(#routeGrad);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* terracotta arrowhead, placed by JS at the drawn tip */
+.route-arrow {
+  fill: var(--terracotta);
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+}
+.route-arrow.is-on { opacity: 1; }
+
+
+/* city labels appear with their corresponding dots, positioned above map elements but below stamps */
+.city-labels {
+  position: relative;
+  z-index: 2;
+}
+.city-label {
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+.city-label.is-shown { opacity: 1; }
+
+/* connector lines appear with their corresponding stamps */
+.connector {
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+.connector.is-active { opacity: 1; }
+
+/* stamps → small, clean stamps that fade in next to cities */
+.story__stamp {
+  position: absolute;
+  width: 150px;
+  max-width: 150px;
+  background: rgba(250, 247, 242, 0.95);
+  border-radius: 6px;
+  padding: 0.6rem 0.8rem 0.5rem;
+  box-shadow: 0 6px 16px rgba(26, 26, 26, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow: hidden;
+  z-index: 10;
+  opacity: 0;
+  transform: translate(var(--tx, 0), var(--ty, 0)) rotate(var(--rot, 0deg)) scale(0.9);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+
+/* clean dotted perforation frame */
+.story__stamp::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px dotted rgba(26, 26, 26, 0.12);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* minimal postmark */
+.story__stamp::after {
+  content: "";
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle,
+    transparent 0 18px,
+    var(--accent) 18px 19px,
+    transparent 19px 24px,
+    var(--accent) 24px 25px,
+    transparent 25px);
+  opacity: 0.08;
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+
+.stamp__country,
+.stamp__year,
+.stamp__tag {
+  position: relative;
+  z-index: 1;
+}
+
+.stamp__country {
+  font-weight: 500;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.stamp__year {
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+}
+.stamp__tag {
+  margin-top: 3px;
+  padding-top: 4px;
+  border-top: 1px solid var(--line);
+  font-weight: 500;
+  font-size: 0.55rem;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+/* active: stamp fades in cleanly */
+.story__stamp.is-active {
+  opacity: 1;
+  transform: translate(var(--tx, 0), var(--ty, 0)) rotate(var(--rot, 0deg)) scale(1);
+}
+
+/* positioning stamps with clear space from their dots */
+.story__stamp--mumbai   {
+  right: -8%;
+  bottom: 10%;
+  --ty: 0%;
+  --rot: -1deg;
+}
+.story__stamp--amsterdam {
+  left: 35%;
+  top: -5%;
+  --ty: 0%;
+  --rot: 1deg;
+}
+.story__stamp--casablanca {
+  left: -12%;
+  bottom: 25%;
+  --ty: 0%;
+  --rot: -0.5deg;
+}
+
+/* ====================================================================
+   Story left column — a physical sticky note / card.
+   Warmer paper, a soft shadow on the right edge for natural separation
+   (no divider line), and a barely-there paper grain.
+   ==================================================================== */
+.story__note {
+  position: relative;
+  z-index: 2;                                   /* sits above the map column */
+  background-color: #F5F2EE;                    /* a hair warmer than the map cream — barely there */
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.06);   /* right-edge only */
+}
+.story__note::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ====================================================================
+   Map stamps — passport-style cards that fade in beside each city
+   (one per scrollytelling step). Positioned over the SVG map column.
+   ==================================================================== */
+.map-stamp {
+  position: absolute;
+  width: 158px;
+  background: #FAF7F2;                 /* cream */
+  border: 1px dashed rgba(26, 26, 26, 0.28);  /* thin perforated edge */
+  border-radius: 4px;
+  padding: 0.7rem 0.85rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 8px 20px rgba(26, 26, 26, 0.10);
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
+}
+
+/* inner perforation frame for a stamp-y double edge */
+.map-stamp::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px dotted rgba(26, 26, 26, 0.18);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.map-stamp__country {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;           /* small caps look */
+  color: var(--muted);
+}
+.map-stamp__years {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--terracotta);            /* terracotta bold */
+}
+.map-stamp__detail {
+  margin-top: 2px;
+  padding-top: 5px;
+  border-top: 1px solid var(--line);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+}
+
+/* per-stamp placement (relative to the map column) + slight rotation.
+   --rot is baked into the resting + active transforms so the fade-in
+   keeps each card tilted. */
+/* Fallback positions (approximate) — script.js anchors each stamp precisely
+   into a clear corner beside its city dot once the map has laid out. */
+.map-stamp--india     { left: 72%; top: 34%; --rot: -2deg; }   /* above-right of Mumbai (top-right) */
+.map-stamp--nederland { left: 24%; top: 4%;  --rot: 1deg; }    /* above-left of Amsterdam (top-left) */
+.map-stamp--maroc     { left: 2%;  top: 70%; --rot: -1.5deg; } /* below-left of Casablanca (bottom-left) */
+
+.map-stamp {
+  transform: translateY(10px) rotate(var(--rot, 0deg)) scale(0.96);
+}
+.map-stamp.is-active {
+  opacity: 1;
+  transform: translateY(0) rotate(var(--rot, 0deg)) scale(1);
+}
+
+/* On narrow screens the map stacks; show the stamps inline-ish so they
+   don't overlap the (static) map. */
+@media (max-width: 860px) {
+  .map-stamp { position: static; width: auto; max-width: 220px; margin: 0.5rem 0; }
+}
+
+/* ====================================================================
+   Work — pinboard collage
+   ==================================================================== */
+.work__sub { color: var(--muted); margin-top: 0.7rem; max-width: 44ch; }
+
+/* Curated polaroid wall — uniform cards, evenly spaced, gently rotated. */
+.pinboard {
+  margin-top: 3rem;
+  max-width: 760px; margin-inline: auto;   /* keeps a curated 3 + 2 arrangement */
+  display: flex; flex-wrap: wrap;
+  justify-content: center; align-items: flex-start;
+  gap: 2.4rem 2rem;
+}
+.pin {
+  position: relative; z-index: 1; width: 220px; margin: 0;
+  background: #fff; padding: 10px 10px 6px; border-radius: 2px;
+  box-shadow: 0 10px 22px rgba(26, 26, 26, 0.18);
+  transform: rotate(var(--r, 0deg));
+  transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease), opacity 0.6s var(--ease);
+  cursor: pointer; outline: none;
+}
+/* Fixed image frame so every card is exactly the same height regardless of
+   the source image's aspect ratio. */
+.pin img, .pin__ph {
+  display: block; width: 100%; height: 160px;
+  object-fit: cover; border-radius: 1px; background: var(--card);
+}
+.pin figcaption { font-weight: 500; font-size: 0.82rem; color: var(--ink); text-align: center; padding: 0.45rem 0 0.15rem; }
+.pin figcaption b { font-weight: 700; }
+.pin::before { /* washi tape */
+  content: ""; position: absolute; top: -11px; left: 50%;
+  width: 62px; height: 20px; transform: translateX(-50%) rotate(-3deg);
+  background: var(--accent-soft); border: 1px solid rgba(193,68,14,0.25);
+}
+.pin--note::before { background: rgba(26,26,26,0.08); border-color: rgba(26,26,26,0.16); }
+.pin__dot { position: absolute; bottom: 8px; right: 8px; width: 11px; height: 11px; border-radius: 50%; border: 2px solid #fff; }
+.pin__dot--india { background: var(--accent); }
+.pin__dot--europe { background: var(--ink); }
+.pin__dot--morocco { background: var(--brown); }
+/* Project-accent dots — a subtle hint of the colour world each card opens into */
+.pin__dot--terracotta { background: #C1440E; }
+.pin__dot--green      { background: #138720; }
+.pin__dot--blue       { background: #0C3068; }
+.pin__dot--gold       { background: #FFBC00; }
+.pin__dot--clay       { background: #9C6B4F; }
+.pin:hover, .pin:focus-visible, .pin.front {
+  transform: rotate(0deg) scale(1.06) translateY(-6px);
+  box-shadow: 0 26px 50px rgba(26, 26, 26, 0.3);
+  z-index: 30 !important;
+}
+
+/* staggered entrance */
+.pinboard .pin { opacity: 0; }
+.pinboard.visible .pin { opacity: 1; }
+.pinboard.visible .pin:nth-child(1) { transition-delay: 0.05s; }
+.pinboard.visible .pin:nth-child(2) { transition-delay: 0.12s; }
+.pinboard.visible .pin:nth-child(3) { transition-delay: 0.19s; }
+.pinboard.visible .pin:nth-child(4) { transition-delay: 0.26s; }
+.pinboard.visible .pin:nth-child(5) { transition-delay: 0.33s; }
+.pinboard.visible .pin:nth-child(6) { transition-delay: 0.40s; }
+.pinboard.visible .pin:nth-child(7) { transition-delay: 0.47s; }
+
+/* Thesis link below the wall */
+.work__thesis { text-align: center; margin-top: 2.8rem; }
+.work__thesis a {
+  color: var(--accent); text-decoration: none;
+  font-size: 0.95rem; font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s var(--ease);
+}
+.work__thesis a:hover { border-bottom-color: var(--accent); }
+
+/* ====================================================================
+   Protected (NDA) project cards — lock badge, "Protected" label,
+   and the shared password modal. All tokens reused from the palette.
+   ==================================================================== */
+.pin--protected { cursor: pointer; }
+
+/* Tiny, subtle lock tucked into the top-right corner of the image */
+.pin__lock {
+  position: absolute; top: 16px; right: 16px; z-index: 3;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 9px; line-height: 1;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 1px 4px rgba(26, 26, 26, 0.22);
+}
+
+/* ---- The modal ---- */
+.pw-modal {
+  position: fixed; inset: 0; z-index: 200;
+  display: none; align-items: center; justify-content: center;
+  padding: 1.5rem;
+}
+.pw-modal.is-open { display: flex; }
+body.pw-open { overflow: hidden; }
+
+.pw-modal__overlay {
+  position: absolute; inset: 0;
+  background: rgba(250, 247, 242, 0.97);   /* cream */
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+}
+.pw-modal__card {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 360px; text-align: center;
+  animation: pwFadeIn 0.4s var(--ease);
+}
+@keyframes pwFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+.pw-modal__lock { font-size: 1.9rem; margin-bottom: 1.1rem; }
+.pw-modal__name {
+  font-size: 1.35rem; font-weight: 700; color: var(--ink);
+  margin-bottom: 0.9rem;
+}
+.pw-modal__text {
+  font-size: 0.98rem; line-height: 1.6; color: var(--muted);
+  margin-bottom: 1.7rem;
+}
+.pw-modal__contact {
+  display: inline-block; text-decoration: none;
+  font-family: var(--font); font-size: 0.95rem; font-weight: 600;
+  letter-spacing: 0.02em; padding: 0.8rem 1.8rem; cursor: pointer;
+  color: #fff; background: var(--accent); border: none; border-radius: 3px;
+  transition: background 0.25s var(--ease), transform 0.15s var(--ease);
+}
+.pw-modal__contact:hover { background: #a5380b; }
+.pw-modal__contact:active { transform: scale(0.98); }
+.pw-modal__back {
+  display: block; margin: 1.2rem auto 0; cursor: pointer;
+  font-family: var(--font); font-size: 0.85rem; color: var(--muted);
+  background: none; border: none;
+  transition: color 0.3s var(--ease);
+}
+.pw-modal__back:hover { color: var(--accent); }
+
+/* ====================================================================
+   Process
+   ==================================================================== */
+.steps { margin-top: 3rem; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); }
+.step { padding: 2.2rem 1.6rem 2.2rem 0; border-right: 1px solid var(--line); }
+.step:last-child { border-right: none; }
+.step__no { font-weight: 700; font-size: 1rem; color: var(--accent); }
+.step h3 { font-weight: 600; font-size: 1.5rem; margin: 1.2rem 0 0.7rem; color: var(--ink); }
+.step p { color: var(--muted); font-size: 0.92rem; }
+
+/* ====================================================================
+   Contact
+   ==================================================================== */
+.contact { padding-bottom: 0; }
+.contact__inner { text-align: center; max-width: 820px; }
+.contact__cta { font-weight: 600; font-size: clamp(2.2rem, 7vw, 4.6rem); line-height: 1.02; color: var(--ink); margin: 0.5rem auto 2rem; }
+.contact__email { font-size: clamp(1.05rem, 3vw, 1.6rem); font-weight: 500; color: var(--accent); border-bottom: 1.5px solid transparent; transition: border-color 0.3s var(--ease); }
+.contact__email:hover { border-color: var(--accent); }
+
+.contact__form { margin: 3rem auto 0; max-width: 640px; display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem 1.4rem; text-align: left; }
+.field { position: relative; }
+.field--full { grid-column: 1 / -1; }
+.field input, .field textarea {
+  width: 100%; background: transparent; border: none; border-bottom: 1.5px solid var(--line);
+  color: var(--ink); font-family: var(--font); font-size: 1rem; padding: 0.7rem 0; resize: vertical;
+  transition: border-color 0.3s var(--ease);
+}
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+.field label { position: absolute; left: 0; top: 0.7rem; color: var(--muted); font-size: 1rem; pointer-events: none; transition: transform 0.25s var(--ease), font-size 0.25s var(--ease), color 0.25s var(--ease); }
+.field input:focus + label, .field input:not(:placeholder-shown) + label,
+.field textarea:focus + label, .field textarea:not(:placeholder-shown) + label {
+  transform: translateY(-1.5rem); font-size: 0.74rem; letter-spacing: 0.04em; color: var(--accent);
+}
+.field .error { display: block; color: var(--accent); font-size: 0.74rem; min-height: 1rem; margin-top: 0.4rem; }
+.btn-send { grid-column: 1 / -1; justify-self: start; background: var(--ink); color: var(--bg); border: none; border-radius: 100px; padding: 0.85rem 1.9rem; font-family: var(--font); font-weight: 600; cursor: pointer; transition: transform 0.3s var(--ease), background 0.3s var(--ease); }
+.btn-send:hover { transform: translateY(-2px); background: var(--accent); }
+.form-status { grid-column: 1 / -1; font-size: 0.9rem; color: var(--accent); min-height: 1rem; }
+
+.contact__socials { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 3.5rem; }
+.contact__socials a { font-size: 0.85rem; font-weight: 500; color: var(--muted); transition: color 0.3s var(--ease); }
+.contact__socials a:hover { color: var(--accent); }
+.footer { margin-top: 4rem; border-top: 1px solid var(--line); padding: 1.6rem clamp(1.25rem, 5vw, 4rem); display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--muted); }
+
+/* ====================================================================
+   Scroll reveal
+   ==================================================================== */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s var(--ease), transform 0.8s var(--ease); }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ====================================================================
+   Responsive
+   ==================================================================== */
+@media (max-width: 920px) {
+  /* stacked layout for mobile */
+  .story__scroll { height: auto; }
+
+  /* drop the pinned-stage behaviour and just stack the columns */
+  .story__stage {
+    position: static;
+    display: block;
+    height: auto;
+    min-height: 0;
+  }
+
+  /* triggers only exist to drive the desktop scrollytelling */
+  .story__triggers { display: none; }
+
+  .story__left, .story__right {
+    position: static;
+    height: auto;
+    min-height: 0;
+    width: 100%;
+  }
+
+  .story__left {
+    padding: clamp(3rem, 8vh, 5rem) clamp(1.5rem, 5vw, 3rem);
+    margin-left: 0;
+  }
+
+  .story__right {
+    margin-left: 0;
+    padding: clamp(2rem, 6vh, 4rem) clamp(1.5rem, 5vw, 3rem);
+    min-height: 400px;
+  }
+
+  .story__headline {
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+    margin-bottom: 1.2rem;
+  }
+
+  .story__progress {
+    margin-bottom: 1.2rem;
+  }
+
+  .story__city-name {
+    display: block;
+    margin-top: 0;
+    margin-bottom: 12px;
+    opacity: 1;
+    transform: none;
+  }
+
+  .story__text-container {
+    margin-bottom: 2rem;
+  }
+
+  .story__text {
+    position: static;
+    opacity: 1;
+    transform: none;
+    margin-bottom: 1.2rem;
+    max-width: none;
+    font-size: clamp(1.1rem, 4vw, 1.3rem);
+  }
+
+  .story__cv-link {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* make stamps smaller on mobile */
+  .story__stamp {
+    width: 120px;
+    padding: 0.5rem 0.6rem 0.4rem;
+  }
+  .stamp__year { font-size: 1.1rem; }
+  .stamp__country { font-size: 0.55rem; }
+  .stamp__tag { font-size: 0.5rem; }
+}
+@media (max-width: 820px) {
+  .topnav__links a:nth-child(3) { display: none; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .step { border-right: none; border-bottom: 1px solid var(--line); padding-right: 1rem; }
+  .step:nth-child(odd) { border-right: 1px solid var(--line); }
+  .contact__form { grid-template-columns: 1fr; }
+  .pinboard { gap: 1.8rem 1.4rem; }
+}
+@media (max-width: 520px) {
+  .steps { grid-template-columns: 1fr; }
+  .step { border-right: none !important; }
+  .pin:nth-child(even) { margin-top: 0; }
+}
+
+/* ====================================================================
+   Reduced motion
+   ==================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .stage { height: 100vh; }
+  .orb, .portal__hint__arrow { animation: none; }
+  .reveal, .pinboard .pin { opacity: 1 !important; transform: none; transition: none; }
+  .pin { transform: rotate(var(--r)); }
+}
+
+/* ====================================================================
+   Project Pages
+   ==================================================================== */
+
+/* Override main portfolio styles to ensure project pages can scroll.
+   NOTE: this must NOT target `html` — doing so makes the root element a
+   scroll container on the main portfolio too, which stops <body>'s overflow
+   from propagating to the viewport, turns <body> into a second nested
+   scroller, and breaks `position: sticky` (and the story scroll math).
+   Keep it scoped to project pages so the main page keeps a single
+   viewport scroller. */
+body.project-page {
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  height: auto !important;
+}
+
+/* Ensure all project sections are visible and properly spaced */
+.project-page .section {
+  display: block;
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+}
+
+.project-main {
+  position: relative;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Project pages use the same topnav as main portfolio */
+
+/* Each project page carries its own accent identity via --page-accent.
+   The main portfolio (index.html) is unaffected — it never sets this and
+   stays terracotta. Add the matching body class (e.g. proj-parking-pal)
+   to a project page to switch its whole accent. */
+body.project-page { --page-accent: var(--terracotta); }     /* default */
+body.project-page.proj-parking-pal      { --page-accent: #138720; }  /* green  */
+body.project-page.proj-inner-beauty     { --page-accent: #C1440E; }  /* terracotta */
+body.project-page.proj-mr-byte          { --page-accent: #0C3068; }  /* blue   */
+body.project-page.proj-data-dashboard   { --page-accent: #FFBC00; }  /* yellow */
+body.project-page.proj-finance-ecosystem{ --page-accent: #9C6B4F; }  /* clay (remaining) */
+body.project-page.proj-retirement-investing { --page-accent: #C1440E; }  /* terracotta */
+
+.project-page .section__index {
+  color: var(--page-accent);
+}
+
+.project-page .cv-btn {
+  color: var(--page-accent);
+}
+
+.project-page .project-tags span {
+  color: var(--page-accent);
+}
+
+.project-page .goal-quote {
+  color: var(--page-accent);
+}
+
+.project-page .evaluation-goals li::before {
+  color: var(--page-accent);
+}
+
+.project-page .part-label {
+  color: var(--page-accent);
+}
+
+.project-page .meta-label {
+  color: var(--page-accent);
+}
+
+.project-page .method-number {
+  color: var(--page-accent);
+}
+
+/* Keep logo terracotta on project pages */
+.project-page .topnav__logo {
+  color: var(--ink);
+}
+
+.project-page .topnav__logo span {
+  color: var(--terracotta);
+}
+
+/* Clean editorial spacing for project pages */
+.project-page .section {
+  padding: clamp(5rem, 12vh, 8rem) 0;
+}
+
+.project-hero {
+  padding: clamp(10rem, 20vh, 16rem) 0 clamp(6rem, 12vh, 10rem);
+  text-align: center;
+}
+
+.project-title {
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+
+.project-subtitle {
+  font-size: clamp(1.2rem, 2.8vw, 1.6rem);
+  color: var(--muted);
+  max-width: 55ch;
+  margin: 0 auto 3rem;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.project-tags span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.project-tags span:not(:last-child)::after {
+  content: " ·";
+  margin-left: 1rem;
+  color: var(--accent);
+}
+
+/* Section labels match main portfolio exactly */
+.project-page .section__index {
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.3rem;
+}
+
+.project-page .section__title {
+  font-weight: 600;
+  font-size: clamp(2rem, 5.5vw, 3.8rem);
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin-bottom: 2rem;
+}
+
+/* Overview section - clean two-column layout */
+.overview-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: clamp(4rem, 10vw, 8rem);
+  align-items: start;
+}
+
+.overview-challenge h2 {
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 2rem;
+  line-height: 1.2;
+}
+
+.overview-challenge p {
+  font-size: 1.1rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.overview-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.meta-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+.meta-value {
+  font-size: 1rem;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* Research methods - clean minimal row */
+.research-methods {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(2rem, 8vw, 6rem);
+  margin-top: 4rem;
+}
+
+.research-method {
+  text-align: left;
+}
+
+.method-number {
+  font-size: 3rem;
+  font-weight: 300;
+  color: var(--accent);
+  opacity: 0.4;
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+.method-name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.8rem;
+  line-height: 1.2;
+}
+
+.method-description {
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* Design goal - clean centered quote */
+.design-goal {
+  text-align: center;
+  padding: clamp(4rem, 10vh, 6rem) 0;
+}
+
+.goal-quote {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  font-style: italic;
+  color: var(--accent);
+  line-height: 1.4;
+  font-weight: 500;
+  max-width: 45ch;
+  margin: 0 auto;
+}
+
+/* Content sections - clean typography */
+.content-text {
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 70ch;
+  margin: 2rem 0;
+}
+
+/* Solution parts - clean minimal layout */
+.solution-parts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(4rem, 8vw, 8rem);
+  margin-top: 4rem;
+}
+
+.solution-part h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.solution-part p {
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.part-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.6;
+  margin-bottom: 0.8rem;
+}
+
+/* Evaluation goals - clean list */
+.evaluation-goals {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.evaluation-goals li {
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.7;
+  padding-left: 2rem;
+  position: relative;
+}
+
+.evaluation-goals li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 600;
+  opacity: 0.6;
+}
+
+/* Image placeholders - simple flat rectangles */
+.image-placeholder {
+  background: var(--card);
+  border-radius: 2px;
+  margin: 2rem 0;
+  opacity: 0.6;
+}
+
+.image-large {
+  height: clamp(300px, 40vh, 500px);
+  width: 100%;
+}
+
+.image-medium {
+  height: clamp(200px, 25vh, 350px);
+  width: 100%;
+}
+
+.image-small {
+  height: clamp(150px, 20vh, 250px);
+  width: 100%;
+}
+
+/* Prototype images - clean grid */
+.prototype-content {
+  margin-top: 3rem;
+}
+
+.prototype-images {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.prototype-grid {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+/* Footer */
+.project-footer {
+  margin-top: clamp(6rem, 12vh, 10rem);
+  padding: 3rem 0;
+  text-align: center;
+  border-top: 1px solid rgba(26, 26, 26, 0.08);
+}
+
+@media (max-width: 768px) {
+  .project-nav {
+    padding: 1rem clamp(1rem, 4vw, 2rem);
+  }
+
+  .project-hero {
+    padding: clamp(6rem, 15vh, 10rem) 0 clamp(4rem, 8vh, 6rem);
+  }
+
+  .project-page .section {
+    padding: clamp(3rem, 8vh, 5rem) 0;
+  }
+
+  .overview-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .research-methods {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .solution-parts {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .prototype-images {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .prototype-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: none;
+    gap: 1rem;
+  }
+}
+  .portal__hint { animation: none; }
+  .stamp, .stamp::after, .stamp__tag { transition: none; }
+}
+
+/* ====================================================================
+   About — static fallback (reduced motion / no scrollytelling)
+   JS adds .about--static; everything stacks and shows at once.
+   ==================================================================== */
+.about--static .about__scroll { height: auto; }
+.about--static .about__map-container {
+  position: static; height: auto; min-height: 400px;
+  padding: clamp(4rem, 10vh, 7rem) 0;
+}
+.about--static .about__intro {
+  position: static; max-width: 60ch; margin: 0 auto 2.5rem;
+  transform: none; left: auto; text-align: left;
+  background: none; padding: 0; border-radius: 0; backdrop-filter: none;
+}
+.about--static .about__text-container {
+  position: static; height: auto; min-height: 0;
+  margin-top: 2rem;
+}
+.about--static .about__story-text {
+  position: static;
+  opacity: 1; transform: none;
+  max-width: 60ch; margin: 0 0 1.4rem;
+  background: none; padding: 0; border-radius: 0;
+  backdrop-filter: none; box-shadow: none;
+}
