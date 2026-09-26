@@ -955,6 +955,7 @@ body.project-page.proj-mr-byte          { --page-accent: #0C3068; }  /* blue   *
 body.project-page.proj-data-dashboard   { --page-accent: #FFBC00; }  /* yellow */
 body.project-page.proj-finance-ecosystem{ --page-accent: #B8860B; }  /* yellow, darkened for contrast */
 body.project-page.proj-retirement-investing { --page-accent: #C1440E; }  /* terracotta */
+body.project-page.proj-senseglove        { --page-accent: #6B3FA0; }  /* purple */
 
 .project-page .section__index {
   color: var(--page-accent);
