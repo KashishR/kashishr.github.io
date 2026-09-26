@@ -896,9 +896,9 @@ body.pw-open { overflow: hidden; }
 .btn-send:hover { transform: translateY(-2px); background: var(--accent); }
 .form-status { grid-column: 1 / -1; font-size: 0.9rem; color: var(--accent); min-height: 1rem; }
 
-.contact__socials { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 3.5rem; }
-.contact__socials a { font-size: 0.85rem; font-weight: 500; color: var(--muted); transition: color 0.3s var(--ease); }
-.contact__socials a:hover { color: var(--accent); }
+.contact__socials { text-align: center; font-size: 0.95rem; color: var(--muted); margin-top: 3.5rem; }
+.contact__socials a { font-weight: 600; color: var(--accent); transition: opacity 0.3s var(--ease); }
+.contact__socials a:hover { opacity: 0.75; }
 .footer { margin-top: 4rem; border-top: 1px solid var(--line); padding: 1.6rem clamp(1.25rem, 5vw, 4rem); display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--muted); }
 
 /* ====================================================================
