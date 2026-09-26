@@ -21,7 +21,6 @@
     <nav class="topnav__links">
       <a href="#about">Story</a>
       <a href="#work">Work</a>
-      <a href="#process">Process</a>
       <a href="#contact">Contact</a>
     </nav>
   </header>
@@ -77,87 +76,43 @@
 
   <main class="world" id="world">
     <!-- ============================================================
-         STORY — Simple reliable scrollytelling
+         STORY — Minimal typographic timeline
          ============================================================ -->
-    <section id="story" style="position:relative; height:300vh;">
-      <div style="position:sticky; top:0; height:100vh; display:flex; background:#FAF7F2;">
+    <section class="section story" id="story">
+      <div class="timeline-scroll" id="timeline-scroll">
+        <div class="timeline-sticky">
+          <div class="container">
+            <p class="section__index reveal">(01) — The Story</p>
+            <h2 class="section__title reveal">I learned to design <em>by moving.</em></h2>
 
-        <!-- Left column — styled as a physical sticky note (see .story__note) -->
-        <div class="story__note" style="width:35%; padding:4rem; display:flex; flex-direction:column; justify-content:center;">
-          <p style="font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:#C1440E; margin-bottom:2.5rem;">(01) — The Story</p>
-          <h2 style="font-size:2.5rem; font-weight:700; line-height:1.2; margin-bottom:2rem;">I learned to design <em style="color:#C1440E; font-style:italic;">by moving.</em></h2>
+            <div class="timeline">
+              <div class="timeline__line" aria-hidden="true">
+                <span class="timeline__line-fill"></span>
+                <span class="timeline__dot"></span>
+              </div>
+              <div class="timeline__item" data-step="0">
+                <span class="timeline__years">’00 – ’22</span>
+                <h3 class="timeline__place">India</h3>
+                <p class="timeline__detail">Grew up in Mumbai, studied Design, and started my UX career at Deloitte.</p>
+                <span class="timeline__tag">B.Des · Deloitte</span>
+              </div>
+              <div class="timeline__item" data-step="1">
+                <span class="timeline__years">’22 – ’24</span>
+                <h3 class="timeline__place">Netherlands</h3>
+                <p class="timeline__detail">Master’s in Design for Interaction at TU Delft, with an internship at Senseglove.</p>
+                <span class="timeline__tag">TU Delft · Senseglove</span>
+              </div>
+              <div class="timeline__item" data-step="2">
+                <span class="timeline__years">’24 – now</span>
+                <h3 class="timeline__place">Morocco</h3>
+                <p class="timeline__detail">The boldest move yet — Casablanca, working as a UX Designer at BCG.</p>
+                <span class="timeline__tag">BCG · Casablanca</span>
+              </div>
+            </div>
 
-          <div style="display:flex; gap:8px; margin-bottom:2rem;">
-            <span class="story-dot" data-step="0" style="width:8px;height:8px;border-radius:50%;background:#C1440E;transition:all 0.3s;"></span>
-            <span class="story-dot" data-step="1" style="width:8px;height:8px;border-radius:50%;border:1.5px solid #C8C2BA;transition:all 0.3s;"></span>
-            <span class="story-dot" data-step="2" style="width:8px;height:8px;border-radius:50%;border:1.5px solid #C8C2BA;transition:all 0.3s;"></span>
-          </div>
-
-          <div class="story-block" data-step="0" style="transition:all 0.6s ease;">
-            <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#C1440E;margin-bottom:0.75rem;">— Mumbai</p>
-            <p style="font-size:1.1rem;line-height:1.7;color:#3A3530;">I grew up in Mumbai, studied Design, and started my UX career at Deloitte.</p>
-          </div>
-          <div class="story-block" data-step="1" style="display:none;transition:all 0.6s ease;">
-            <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#C1440E;margin-bottom:0.75rem;">— Amsterdam</p>
-            <p style="font-size:1.1rem;line-height:1.7;color:#3A3530;">In 2022 I moved to the Netherlands — Master’s in Design for Interaction at TU Delft, internship at Senseglove.</p>
-          </div>
-          <div class="story-block" data-step="2" style="display:none;transition:all 0.6s ease;">
-            <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#C1440E;margin-bottom:0.75rem;">— Casablanca</p>
-            <p style="font-size:1.1rem;line-height:1.7;color:#3A3530;">In 2024 I made the boldest move yet — Casablanca, Morocco, to work as a UX Designer at BCG.</p>
-          </div>
-
-          <a href="cv.html" style="margin-top:2.5rem;color:#C1440E;text-decoration:none;font-size:0.9rem;">Find my CV here →</a>
-        </div>
-
-        <!-- Right column: map -->
-        <div style="width:65%; position:relative; overflow:hidden;">
-          <!-- Wider viewBox (800×500) gives everything more horizontal room. -->
-          <svg id="storyMap" width="100%" height="100%" viewBox="0 0 800 500">
-            <!-- Simplified but recognizable continent outlines (no fill). Each is
-                 drawn once and translated so it sits under its city dot. -->
-            <g fill="none" stroke="#DDD8D0" stroke-width="0.6" stroke-linejoin="round" stroke-linecap="round">
-              <!-- Western Europe — Benelux at top, France, Iberian peninsula jutting SW (by Amsterdam) -->
-              <path transform="translate(100, 10)" d="M300 90 C318 88 330 92 333 104 C338 120 340 132 338 142 C334 154 326 158 322 162 C318 172 314 176 310 180 C300 192 288 206 270 218 C258 216 248 214 238 210 C236 198 240 186 245 178 C252 174 258 172 262 170 C268 162 270 156 272 150 C264 146 256 142 250 138 C258 130 270 124 278 120 C284 108 290 96 300 90 Z"/>
-              <!-- Indian subcontinent — broad in the north, tapering to a southern point (by Mumbai) -->
-              <path transform="translate(110, 0)" d="M458 280 C480 268 515 268 545 276 C540 300 528 322 518 345 C508 372 502 400 496 430 C490 402 480 378 472 352 C463 326 456 304 458 280 Z"/>
-              <!-- Northwest Africa / Maghreb — Morocco's Atlantic (W) & Mediterranean (N) coasts (by Casablanca) -->
-              <path transform="translate(50, 20)" d="M130 262 C160 258 210 260 252 266 C256 268 258 272 256 280 C255 305 254 325 252 340 C220 346 175 348 142 348 C132 330 124 312 120 294 C118 280 122 268 130 262 Z"/>
-            </g>
-
-            <!-- Travel path: Mumbai (bottom right) → Amsterdam (top centre) → Casablanca (centre left) -->
-            <path id="travelPath" d="M 590 380 Q 500 230 400 130 Q 300 210 200 320" fill="none" stroke="#C1440E" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="1000" stroke-dashoffset="1000" style="transition: stroke-dashoffset 0.2s ease;"/>
-
-            <!-- Mumbai dot (bottom right) — label below; India stamp sits above-right -->
-            <circle class="city-dot" data-city="0" cx="590" cy="380" r="5" fill="#C1440E" opacity="1"/>
-            <text x="568" y="404" font-size="11" fill="#C1440E" letter-spacing="1" font-family="DM Sans, sans-serif">MUMBAI</text>
-
-            <!-- Amsterdam dot (top centre) — label to the right; Nederland stamp sits above-left -->
-            <circle class="city-dot" data-city="1" cx="400" cy="130" r="5" fill="#C1440E" opacity="0" style="transition:opacity 0.5s;"/>
-            <text class="city-label" data-city="1" x="415" y="134" font-size="11" fill="#C1440E" letter-spacing="1" font-family="DM Sans, sans-serif" opacity="0" style="transition:opacity 0.5s;">AMSTERDAM</text>
-
-            <!-- Casablanca dot (centre left) — label to the right; Maroc stamp sits below-left -->
-            <circle class="city-dot" data-city="2" cx="200" cy="320" r="5" fill="#C1440E" opacity="0" style="transition:opacity 0.5s;"/>
-            <text class="city-label" data-city="2" x="215" y="316" font-size="11" fill="#C1440E" letter-spacing="1" font-family="DM Sans, sans-serif" opacity="0" style="transition:opacity 0.5s;">CASABLANCA</text>
-          </svg>
-
-          <!-- Passport stamps — one fades in per city as its step activates -->
-          <div class="map-stamp map-stamp--india" data-stamp="0">
-            <span class="map-stamp__country">India</span>
-            <span class="map-stamp__years">’00–’22</span>
-            <span class="map-stamp__detail">B.Des · Deloitte</span>
-          </div>
-          <div class="map-stamp map-stamp--nederland" data-stamp="1">
-            <span class="map-stamp__country">Nederland</span>
-            <span class="map-stamp__years">’22–’24</span>
-            <span class="map-stamp__detail">TU Delft · Senseglove</span>
-          </div>
-          <div class="map-stamp map-stamp--maroc" data-stamp="2">
-            <span class="map-stamp__country">Maroc</span>
-            <span class="map-stamp__years">’24–now</span>
-            <span class="map-stamp__detail">BCG · Casablanca</span>
+            <a href="cv.html" class="timeline__cv">Find my CV here →</a>
           </div>
         </div>
-
       </div>
     </section>
 
@@ -170,73 +125,46 @@
         <h2 class="section__title reveal">My Work.</h2>
         <p class="work__sub reveal">Five projects. Three countries. One thread — designing for people.</p>
 
-        <div class="pinboard reveal" id="pinboard">
-          <figure class="pin" tabindex="0" style="--r:-2deg;">
-            <a href="finance-ecosystem.html" style="display: block; color: inherit; text-decoration: none;">
+        <div class="work-gallery reveal" id="work-gallery">
+          <a class="work-gallery__item" href="finance-ecosystem.html" aria-label="Finance Ecosystem — Casablanca ‘26">
+            <span class="work-gallery__media">
               <img src="img-finance.png" alt="Finance Ecosystem — mobile app screens for a Casablanca financial product" loading="lazy" />
-              <figcaption><b>Finance Ecosystem</b> · Casablanca ‘26</figcaption>
-            </a>
-            <span class="pin__dot pin__dot--clay" title="Finance Ecosystem" aria-hidden="true"></span>
-          </figure>
-
-          <figure class="pin" tabindex="0" style="--r:3deg;">
-            <a href="retirement-investing.html" style="display: block; color: inherit; text-decoration: none;">
-              <div class="pin__ph" style="background:#C1440E;"></div>
-              <figcaption><b>Retirement Investing Platform</b> · Casablanca ‘25–‘26</figcaption>
-            </a>
-            <span class="pin__dot pin__dot--gold" title="Retirement Investing Platform" aria-hidden="true"></span>
-          </figure>
-
-          <figure class="pin" tabindex="0" style="--r:-3deg;">
-            <a href="dashboard.html" style="display: block; color: inherit; text-decoration: none;">
-              <img src="img-dashboard.png" alt="Agent-Driven Dashboard — dark analytics dashboard screens with charts and KPIs" loading="lazy" />
-              <figcaption><b>Agent-Driven Dashboard</b> · Casablanca ‘26</figcaption>
-            </a>
-            <span class="pin__dot pin__dot--terracotta" title="Agent-Driven Dashboard" aria-hidden="true"></span>
-          </figure>
-
-          <figure class="pin" tabindex="0" style="--r:2deg;">
-            <a href="senseglove.html" style="display: block; color: inherit; text-decoration: none;">
-              <div class="pin__ph" style="background:#6B3FA0;"></div>
-              <figcaption><b>Senseglove</b> · Delft ‘24</figcaption>
-            </a>
-            <span class="pin__dot pin__dot--green" title="Senseglove" aria-hidden="true"></span>
-          </figure>
-
-          <figure class="pin" tabindex="0" style="--r:-1deg;">
-            <a href="parking-pal.html" style="display: block; color: inherit; text-decoration: none;">
+            </span>
+            <span class="work-gallery__caption">Finance Ecosystem</span>
+          </a>
+          <a class="work-gallery__item" href="senseglove.html" aria-label="Senseglove — Delft ‘24">
+            <span class="work-gallery__media">
+              <div class="work-gallery__ph" style="background:#6B3FA0;"></div>
+            </span>
+            <span class="work-gallery__caption">Senseglove</span>
+          </a>
+          <a class="work-gallery__item" href="retirement-investing.html" aria-label="Retirement Investing Platform — Casablanca ‘25–‘26">
+            <span class="work-gallery__media">
+              <div class="work-gallery__ph" style="background:#C1440E;"></div>
+            </span>
+            <span class="work-gallery__caption">Retirement Investing Platform</span>
+          </a>
+          <a class="work-gallery__item" href="parking-pal.html" aria-label="Parking Pal — Delft ‘23">
+            <span class="work-gallery__media">
               <img src="img-parking-pal.png" alt="Parking Pal — a bike parked outside TU Delft's PULSE building" loading="lazy" />
-              <figcaption><b>Parking Pal</b> · Delft ‘23</figcaption>
-            </a>
-            <span class="pin__dot pin__dot--green" title="Parking Pal" aria-hidden="true"></span>
-          </figure>
-
-          <figure class="pin" tabindex="0" style="--r:1deg;">
-            <a href="mr-byte.html" style="display: block; color: inherit; text-decoration: none;">
+            </span>
+            <span class="work-gallery__caption">Parking Pal</span>
+          </a>
+          <a class="work-gallery__item" href="dashboard.html" aria-label="Agent-Driven Dashboard — Casablanca ‘26">
+            <span class="work-gallery__media">
+              <img src="img-dashboard.png" alt="Agent-Driven Dashboard — dark analytics dashboard screens with charts and KPIs" loading="lazy" />
+            </span>
+            <span class="work-gallery__caption">Agent-Driven Dashboard</span>
+          </a>
+          <a class="work-gallery__item" href="mr-byte.html" aria-label="Mr. Byte — Mumbai ‘20">
+            <span class="work-gallery__media">
               <img src="img-mr-byte.png" alt="Mr. Byte — a neon arcade game screen showing the Network Layer level" loading="lazy" />
-              <figcaption><b>Mr. Byte</b> · Mumbai ‘20</figcaption>
-            </a>
-            <span class="pin__dot pin__dot--blue" title="Mr. Byte" aria-hidden="true"></span>
-          </figure>
+            </span>
+            <span class="work-gallery__caption">Mr. Byte</span>
+          </a>
         </div>
 
         <p class="work__thesis reveal"><a href="https://drive.google.com/file/d/1Aq_gH9_TfNi3EFFMtL8GTJVZPOEO2Exq/view?usp=sharing" target="_blank" rel="noopener noreferrer">Read my Master’s thesis →</a></p>
-      </div>
-    </section>
-
-    <!-- ============================================================
-         PROCESS
-         ============================================================ -->
-    <section class="section process" id="process">
-      <div class="container">
-        <p class="section__index reveal">(03) — How I work</p>
-        <h2 class="section__title reveal">A process that <em>travels.</em></h2>
-        <ol class="steps">
-          <li class="step reveal"><span class="step__no">01</span><h3>Immerse</h3><p>I start on the ground — research, interviews, and living the context before drawing a single screen.</p></li>
-          <li class="step reveal"><span class="step__no">02</span><h3>Define</h3><p>Synthesis into sharp problems. I separate the cultural from the universal, and frame what's worth solving.</p></li>
-          <li class="step reveal"><span class="step__no">03</span><h3>Prototype</h3><p>Fast, testable artifacts, validated with real people in their own language and rituals.</p></li>
-          <li class="step reveal"><span class="step__no">04</span><h3>Deliver</h3><p>Robust systems and tight handoff — design that survives engineering, scale, and shifting markets.</p></li>
-        </ol>
       </div>
     </section>
 
@@ -245,7 +173,7 @@
          ============================================================ -->
     <section class="section contact" id="contact">
       <div class="container contact__inner">
-        <p class="section__index reveal">(04) — Contact</p>
+        <p class="section__index reveal">(03) — Contact</p>
         <h2 class="contact__cta reveal">Let's design something that <em>travels well.</em></h2>
         <a class="contact__email reveal" href="mailto:ramrakhiani.kashish@bcg.com">ramrakhiani.kashish@bcg.com</a>
 

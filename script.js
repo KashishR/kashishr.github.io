@@ -135,21 +135,7 @@
   });
 
   /* ----------------------------------------------------------------
-     2. Pinboard — bring a pin to the front on click/focus (helps touch,
-        where there is no hover). Click again to drop it back.
-     ---------------------------------------------------------------- */
-  const pins = document.querySelectorAll(".pin");
-  pins.forEach((pin) => {
-    if (pin.hasAttribute("data-protected")) return; // handled by the NDA gate below
-    pin.addEventListener("click", () => {
-      const wasFront = pin.classList.contains("front");
-      pins.forEach((p) => p.classList.remove("front"));
-      if (!wasFront) pin.classList.add("front");
-    });
-  });
-
-  /* ----------------------------------------------------------------
-     2b. Protected BCG projects — instead of navigating, open a modal
+     2. Protected BCG projects — instead of navigating, open a modal
          explaining the case is an ongoing NDA project, with a prompt
          to get in touch. No password: details are shared in interviews.
      ---------------------------------------------------------------- */
@@ -225,6 +211,109 @@
   }
 
   /* ----------------------------------------------------------------
+     3b. Story timeline — scroll-pinned 3-step journey
+        (India → Netherlands → Morocco), each scroll advancing the
+        line/dot to that checkpoint and bringing that step into focus.
+     ---------------------------------------------------------------- */
+  const timelineScroll = document.getElementById("timeline-scroll");
+  const timelineItems = document.querySelectorAll(".timeline__item");
+  const timelineFill = document.querySelector(".timeline__line-fill");
+  const timelineDot = document.querySelector(".timeline__dot");
+
+  if (timelineScroll && timelineItems.length && timelineFill && timelineDot) {
+    const steps = timelineItems.length;
+    let pinned = window.matchMedia("(min-width: 769px)").matches;
+    let ticking = false;
+
+    function setStep(step) {
+      const pct = (step / (steps - 1)) * 100;
+      timelineFill.style.width = pct + "%";
+      timelineDot.style.left = pct + "%";
+      timelineItems.forEach((item, i) => item.classList.toggle("is-active", i === step));
+    }
+
+    function updateTimelineStep() {
+      if (!pinned) {
+        ticking = false;
+        return;
+      }
+      const rect = timelineScroll.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      const scrolled = Math.min(Math.max(-rect.top, 0), total);
+      const progress = total > 0 ? scrolled / total : 0;
+      const step = Math.min(steps - 1, Math.floor(progress * steps));
+      setStep(step);
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(updateTimelineStep);
+        ticking = true;
+      }
+    }
+
+    function onResize() {
+      pinned = window.matchMedia("(min-width: 769px)").matches;
+      if (pinned) updateTimelineStep();
+    }
+
+    setStep(0);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+  }
+
+  /* ----------------------------------------------------------------
+     3c. Work gallery — the frame itself never moves (all six pieces
+        stay visible together), but the image inside each frame drifts
+        a few pixels as the section scrolls through the viewport, each
+        at a slightly different depth. Desktop only, off under reduced
+        motion.
+     ---------------------------------------------------------------- */
+  const workGallery = document.getElementById("work-gallery");
+  const galleryMedia = document.querySelectorAll(".work-gallery__media");
+
+  if (workGallery && galleryMedia.length && !reduceMotion) {
+    const speeds = [0.18, 0.32, 0.12, 0.28, 0.16, 0.3]; // drift per px scrolled, per item
+    const maxDrift = 40; // px — stays inside the media's 15% overscan
+    let parallaxOn = window.matchMedia("(min-width: 821px)").matches;
+    let parallaxTicking = false;
+
+    function updateGalleryParallax() {
+      parallaxTicking = false;
+      if (!parallaxOn) return;
+      const viewportCenter = window.innerHeight / 2;
+      galleryMedia.forEach((media, i) => {
+        const frameRect = media.parentElement.getBoundingClientRect();
+        const frameCenter = frameRect.top + frameRect.height / 2;
+        const speed = speeds[i % speeds.length];
+        const offset = Math.max(-maxDrift, Math.min(maxDrift, (viewportCenter - frameCenter) * speed));
+        media.style.transform = `translateY(${offset}px)`;
+      });
+    }
+
+    function onScrollGalleryParallax() {
+      if (!parallaxTicking) {
+        requestAnimationFrame(updateGalleryParallax);
+        parallaxTicking = true;
+      }
+    }
+
+    function onResizeGalleryParallax() {
+      parallaxOn = window.matchMedia("(min-width: 821px)").matches;
+      if (!parallaxOn) {
+        galleryMedia.forEach((media) => (media.style.transform = ""));
+      } else {
+        updateGalleryParallax();
+      }
+    }
+
+    updateGalleryParallax();
+    window.addEventListener("scroll", onScrollGalleryParallax, { passive: true });
+    window.addEventListener("resize", onResizeGalleryParallax);
+  }
+
+  /* ----------------------------------------------------------------
      4. Cursor glow (desktop, fine pointer)
      ---------------------------------------------------------------- */
   const glow = document.getElementById("cursor-glow");
@@ -281,228 +370,6 @@
       form.reset();
     });
   }
-
-  /* ----------------------------------------------------------------
-     6. Story — Simple reliable scrollytelling
-     ---------------------------------------------------------------- */
-  (function() {
-    const story = document.getElementById('story');
-    if (!story) {
-      console.warn('[story] #story not found — scrollytelling disabled');
-      return;
-    }
-
-    const path = document.getElementById('travelPath');
-    if (!path) {
-      console.warn('[story] #travelPath not found — scrollytelling disabled');
-      return;
-    }
-
-    const blocks = document.querySelectorAll('.story-block');
-    const dots = document.querySelectorAll('.story-dot');
-    const cityDots = document.querySelectorAll('.city-dot');
-    const cityLabels = document.querySelectorAll('.city-label');
-    const stamps = document.querySelectorAll('.map-stamp');
-
-    const pathLen = path.getTotalLength();
-    path.style.strokeDasharray = pathLen;
-    path.style.strokeDashoffset = pathLen;
-
-    console.log('[story] init', {
-      storyHeight: story.offsetHeight,
-      blocks: blocks.length,
-      cityDots: cityDots.length,
-      stamps: stamps.length,
-      pathLen: Math.round(pathLen),
-    });
-
-    // How far along the drawn path each city sits. Mumbai is the path start
-    // (0) and Casablanca the end (1); Amsterdam is the junction between the two
-    // curves, so measure its fractional length by sampling the path.
-    function fractionOfPoint(tx, ty) {
-      if (!path.getPointAtLength) return 0.5;
-      let best = 0, bestDist = Infinity;
-      const samples = 240;
-      for (let i = 0; i <= samples; i++) {
-        const len = (pathLen * i) / samples;
-        const pt = path.getPointAtLength(len);
-        const d = (pt.x - tx) * (pt.x - tx) + (pt.y - ty) * (pt.y - ty);
-        if (d < bestDist) { bestDist = d; best = len; }
-      }
-      return best / pathLen;
-    }
-    const amsterdamDot = Array.prototype.find.call(cityDots, (d) => d.dataset.city === '1');
-    const cityFrac = [
-      0,
-      amsterdamDot ? fractionOfPoint(+amsterdamDot.getAttribute('cx'), +amsterdamDot.getAttribute('cy')) : 0.5,
-      1,
-    ];
-    console.log('[story] city path fractions', cityFrac.map((f) => +f.toFixed(3)));
-
-    let currentStep = -1; // force the first applyStep() to apply
-
-    // Visual update for a city step — the TEXT and map markers (NOT the path,
-    // which is now drawn continuously from scroll in update()).
-    function applyStep(step) {
-      if (step === currentStep) return; // skip redundant work
-      currentStep = step;
-
-      // Text block: fade the incoming one in (0.6s via its inline transition).
-      blocks.forEach((b, i) => {
-        if (i === step) {
-          b.style.display = 'block';
-          b.style.opacity = '0';
-          void b.offsetWidth;          // force reflow so the fade actually runs
-          b.style.opacity = '1';
-        } else {
-          b.style.display = 'none';
-        }
-      });
-
-      // Progress dots
-      dots.forEach((d, i) => {
-        d.style.background = i === step ? '#C1440E' : 'transparent';
-        d.style.border = i === step ? 'none' : '1.5px solid #C8C2BA';
-      });
-
-      // Map dots + labels accumulate up to the current city
-      cityDots.forEach((d) => {
-        d.style.opacity = parseInt(d.dataset.city, 10) <= step ? '1' : '0';
-      });
-      cityLabels.forEach((l) => {
-        l.style.opacity = parseInt(l.dataset.city, 10) <= step ? '1' : '0';
-      });
-
-      // Passport stamps accumulate — every stamp up to and including the
-      // current step stays visible (never hidden once shown).
-      stamps.forEach((s) => {
-        s.classList.toggle('is-active', parseInt(s.dataset.stamp, 10) <= step);
-      });
-
-      console.log('[story] text step →', step);
-    }
-
-    // The text lags the path: it only switches once the path has REACHED the
-    // next city's dot, then waits 300ms (arrive → pause → the story updates).
-    let reachedStep = -1;
-    let switchTimer = null;
-    function reachCity(step) {
-      if (step === reachedStep) return;  // reached-city hasn't changed
-      reachedStep = step;
-      clearTimeout(switchTimer);
-      if (step === currentStep) return;  // already on screen
-      switchTimer = setTimeout(() => applyStep(step), 300);
-    }
-
-    // Anchor each passport stamp diagonally off its city dot, into a clear
-    // corner of the map so it never overlaps a label, dot, the path, or another
-    // stamp. Using the dot's real rendered rect keeps this correct regardless of
-    // how the SVG scales/letterboxes inside its column:
-    //   0 Mumbai (bottom right)  → ABOVE-RIGHT of the dot (top-right area)
-    //   1 Amsterdam (top centre) → ABOVE-LEFT of the dot  (top-left area)
-    //   2 Casablanca (centre left) → BELOW-LEFT of the dot (bottom-left area)
-    const STAMP_SIDE = { '0': 'above-right', '1': 'above-left', '2': 'below-left' };
-    const svgMap = document.getElementById('storyMap');
-    function positionStamps() {
-      if (!svgMap) return;
-      const col = svgMap.parentElement;            // offset parent (position:relative)
-      const colRect = col.getBoundingClientRect();
-      const gap = 18;
-      stamps.forEach((stamp) => {
-        const i = stamp.dataset.stamp;
-        const dot = svgMap.querySelector('.city-dot[data-city="' + i + '"]');
-        if (!dot) return;
-        const dotRect = dot.getBoundingClientRect();
-        const dotX = dotRect.left + dotRect.width / 2 - colRect.left;
-        const dotY = dotRect.top + dotRect.height / 2 - colRect.top;
-        const sw = stamp.offsetWidth;
-        const sh = stamp.offsetHeight;
-
-        let left, top;
-        switch (STAMP_SIDE[i]) {
-          case 'above-right': left = dotX + gap;       top = dotY - gap - sh; break;
-          case 'above-left':  left = dotX - gap - sw;  top = dotY - gap - sh; break;
-          default:            left = dotX - gap - sw;  top = dotY + gap;      break; // below-left
-        }
-
-        // Keep fully inside the map column (it has overflow:hidden).
-        left = Math.max(8, Math.min(left, colRect.width - sw - 8));
-        top = Math.max(8, Math.min(top, colRect.height - sh - 8));
-
-        stamp.style.left = left + 'px';
-        stamp.style.top = top + 'px';
-      });
-    }
-
-    function update() {
-      // getBoundingClientRect() is viewport-relative, so it tracks whichever
-      // element is the scroller. With the single-viewport-scroller model
-      // (see styles.css project-page note) this reflects window scroll.
-      const rect = story.getBoundingClientRect();
-      const total = story.offsetHeight - window.innerHeight;
-      const progress = total > 0
-        ? Math.max(0, Math.min(1, -rect.top / total))
-        : 0;
-
-      // 1) Map scroll progress → how much of the path is drawn, with "dwell"
-      //    zones where the path freezes at a city before moving on:
-      //      0–5%    Mumbai start (path at 0)
-      //      5–45%   draw Mumbai → Amsterdam
-      //      45–55%  dwell at Amsterdam (frozen; text switches to Amsterdam)
-      //      55–85%  draw Amsterdam → Casablanca
-      //      85–100% dwell at Casablanca (frozen; text switches to Casablanca)
-      const A = cityFrac[1];           // path fraction at the Amsterdam junction
-      let drawn;
-      if (progress <= 0.05) {
-        drawn = 0;
-      } else if (progress < 0.45) {
-        drawn = A * (progress - 0.05) / 0.40;        // Mumbai → Amsterdam
-      } else if (progress < 0.55) {
-        drawn = A;                                   // dwell at Amsterdam
-      } else if (progress < 0.85) {
-        drawn = A + (1 - A) * (progress - 0.55) / 0.30; // Amsterdam → Casablanca
-      } else {
-        drawn = 1;                                   // dwell at Casablanca
-      }
-      path.style.strokeDashoffset = pathLen - pathLen * drawn;
-
-      // 2/3) The text advances when the path has fully REACHED a city dot,
-      //      i.e. at the start of that city's dwell zone.
-      let reached = 0;
-      if (progress >= 0.85) reached = 2;       // Casablanca — path fully drawn
-      else if (progress >= 0.45) reached = 1;  // Amsterdam — first leg complete
-      reachCity(reached);
-    }
-
-    // rAF-throttled handler so we never compute more than once per frame.
-    let ticking = false;
-    function onScroll() {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        update();
-        ticking = false;
-      });
-    }
-
-    applyStep(0);                              // start on Mumbai
-    reachedStep = 0;
-    path.style.strokeDashoffset = pathLen;     // nothing drawn yet
-    positionStamps();
-
-    // Capture phase (3rd arg `true`) so we still catch scroll even if a
-    // nested element ends up being the scroll container.
-    window.addEventListener('scroll', onScroll, { passive: true, capture: true });
-    window.addEventListener('resize', () => { onScroll(); positionStamps(); }, { passive: true });
-    window.addEventListener('load', positionStamps);
-    // Re-anchor once webfonts settle (stamp size can shift the layout).
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(positionStamps);
-    }
-
-    console.log('[story] scroll listener attached');
-    update(); // sync to wherever the page currently sits
-  })();
 
   /* ---- Footer year ---- */
   const yearEl = document.getElementById("year");
