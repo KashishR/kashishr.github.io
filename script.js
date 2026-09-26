@@ -247,37 +247,40 @@
      5. Contact form validation
      ---------------------------------------------------------------- */
   const form = document.getElementById("contact-form");
-  const status = document.getElementById("form-status");
-  const rules = {
-    name: (v) => (v.trim().length >= 2 ? "" : "Please enter your name."),
-    email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? "" : "Enter a valid email."),
-    message: (v) => (v.trim().length >= 10 ? "" : "A little more detail, please."),
-  };
-  function showError(field, msg) {
-    const el = form.querySelector(`.error[data-for="${field}"]`);
-    if (el) el.textContent = msg;
-    return !msg;
-  }
-  Object.keys(rules).forEach((field) => {
-    const input = form.elements[field];
-    input.addEventListener("blur", () => showError(field, rules[field](input.value)));
-  });
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    let valid = true;
+  // Project pages load this same script but have no contact form on them.
+  if (form) {
+    const status = document.getElementById("form-status");
+    const rules = {
+      name: (v) => (v.trim().length >= 2 ? "" : "Please enter your name."),
+      email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? "" : "Enter a valid email."),
+      message: (v) => (v.trim().length >= 10 ? "" : "A little more detail, please."),
+    };
+    const showError = (field, msg) => {
+      const el = form.querySelector(`.error[data-for="${field}"]`);
+      if (el) el.textContent = msg;
+      return !msg;
+    };
     Object.keys(rules).forEach((field) => {
-      valid = showError(field, rules[field](form.elements[field].value)) && valid;
+      const input = form.elements[field];
+      input.addEventListener("blur", () => showError(field, rules[field](input.value)));
     });
-    if (!valid) {
-      status.style.color = "var(--rust)";
-      status.textContent = "Please fix the fields above.";
-      return;
-    }
-    // No backend — swap for a real fetch() to your form endpoint.
-    status.style.color = "var(--teal)";
-    status.textContent = "Thank you — your message has been sent (demo).";
-    form.reset();
-  });
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      let valid = true;
+      Object.keys(rules).forEach((field) => {
+        valid = showError(field, rules[field](form.elements[field].value)) && valid;
+      });
+      if (!valid) {
+        status.style.color = "var(--rust)";
+        status.textContent = "Please fix the fields above.";
+        return;
+      }
+      // No backend — swap for a real fetch() to your form endpoint.
+      status.style.color = "var(--teal)";
+      status.textContent = "Thank you — your message has been sent (demo).";
+      form.reset();
+    });
+  }
 
   /* ----------------------------------------------------------------
      6. Story — Simple reliable scrollytelling
@@ -502,5 +505,14 @@
   })();
 
   /* ---- Footer year ---- */
-  document.getElementById("year").textContent = new Date().getFullYear();
+  const yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  /* ---- Embedded prototypes (e.g. Figma Make) ----
+     The embedded canvas grabs mouse-wheel input for its own pan/zoom, which
+     stops the page from scrolling under the cursor. A click-to-activate
+     overlay keeps scroll on the page until the visitor opts into the embed. */
+  document.querySelectorAll("[data-embed-overlay]").forEach((overlay) => {
+    overlay.addEventListener("click", () => overlay.classList.add("is-hidden"));
+  });
 })();
