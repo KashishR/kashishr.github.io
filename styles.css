@@ -953,7 +953,7 @@ body.project-page.proj-parking-pal      { --page-accent: #138720; }  /* green  *
 body.project-page.proj-inner-beauty     { --page-accent: #C1440E; }  /* terracotta */
 body.project-page.proj-mr-byte          { --page-accent: #0C3068; }  /* blue   */
 body.project-page.proj-data-dashboard   { --page-accent: #FFBC00; }  /* yellow */
-body.project-page.proj-finance-ecosystem{ --page-accent: #9C6B4F; }  /* clay (remaining) */
+body.project-page.proj-finance-ecosystem{ --page-accent: #FFBC00; }  /* yellow */
 body.project-page.proj-retirement-investing { --page-accent: #C1440E; }  /* terracotta */
 
 .project-page .section__index {
@@ -1272,12 +1272,103 @@ body.project-page.proj-retirement-investing { --page-accent: #C1440E; }  /* terr
   gap: 1.5rem;
 }
 
+/* Project info — three-column meta trio (Year / Role / Ownership) */
+.project-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+}
+
+.project-info .info-label {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--page-accent);
+  margin-bottom: 0.8rem;
+}
+
+.project-info .info-value {
+  font-size: 1.15rem;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+/* Large project imagery */
+.project-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+  margin: 0 auto;
+}
+
+/* Confidentiality / NDA note */
+.project-note {
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 62ch;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.project-note a {
+  color: var(--page-accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s var(--ease);
+}
+
+.project-note a:hover { border-bottom-color: var(--page-accent); }
+
+/* "← Back to Work" — plain terracotta text link, top-left, identical on
+   every project page (sits at the top of the hero, above the title). */
+.project-backrow {
+  text-align: left;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.project-back {
+  display: inline-block;
+  color: var(--terracotta);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: opacity 0.3s var(--ease);
+}
+
+.project-back:hover { opacity: 0.7; }
+
+/* Body / reading text — consistent size, line height and colour (#3A3530)
+   across every project page. Subtitles and meta stay lighter (--muted). */
+.project-page .content-text,
+.project-page .overview-challenge p,
+.project-page .solution-part p,
+.project-page .evaluation-goals li,
+.project-page .method-description,
+.project-page .prototype-content .content-text {
+  color: #3A3530;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
 /* Footer */
 .project-footer {
   margin-top: clamp(6rem, 12vh, 10rem);
   padding: 3rem 0;
   text-align: center;
   border-top: 1px solid rgba(26, 26, 26, 0.08);
+}
+
+/* Small muted footer line — consistent on all project pages */
+.project-foot-note {
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
 }
 
 @media (max-width: 768px) {
@@ -1296,6 +1387,11 @@ body.project-page.proj-retirement-investing { --page-accent: #C1440E; }  /* terr
   .overview-grid {
     grid-template-columns: 1fr;
     gap: 3rem;
+  }
+
+  .project-info {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
   }
 
   .research-methods {

@@ -20,7 +20,10 @@
   const body = document.body;
 
   body.classList.add("entered");
-  body.classList.add("hero-locked");   // no page scroll while the hero is up
+  // Only lock scrolling on pages that actually have the hero curtain. Project
+  // pages load this same script but have no #hero to lift, so locking there
+  // would leave them permanently unscrollable.
+  if (hero) body.classList.add("hero-locked");   // no page scroll while the hero is up
 
   let dismissed = false;       // is the hero curtain currently lifted?
   let animating = false;       // mid transition (block re-entry)
@@ -105,6 +108,19 @@
       },
       { passive: false }
     );
+  }
+
+  // Deep link: arriving with a section hash (e.g. from a project page's
+  // "← Back to Work" → index.html#work) should skip the portal curtain and
+  // land directly on that section, rather than being trapped behind the hero.
+  if (hero && location.hash && location.hash !== "#portal") {
+    const target = document.querySelector(location.hash);
+    if (target) {
+      hideHero();                       // lift the curtain + unlock scroll
+      requestAnimationFrame(() =>       // hideHero resets to top; then jump
+        target.scrollIntoView({ behavior: "auto", block: "start" })
+      );
+    }
   }
 
   // Returning to the top (logo or Story nav link) brings the hero back.
