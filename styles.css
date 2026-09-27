@@ -1105,12 +1105,19 @@ body.project-page.proj-senseglove        { --page-accent: #6B3FA0; }  /* purple 
 }
 
 .project-hero {
-  padding: clamp(10rem, 20vh, 16rem) 0 clamp(6rem, 12vh, 10rem);
+  padding: clamp(10rem, 20vh, 16rem) 0 clamp(4rem, 8vh, 6rem);
   text-align: center;
 }
 
+/* Tighten the gap between the hero and the metadata panel that follows it —
+   the panel is always the first .section immediately after .project-hero
+   across every project page. */
+.project-hero + .section {
+  padding-top: clamp(1.5rem, 4vh, 2.5rem);
+}
+
 .project-title {
-  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-size: clamp(2.6rem, 6vw, 4.6rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.05;
@@ -1598,9 +1605,6 @@ body.project-page.proj-senseglove        { --page-accent: #6B3FA0; }  /* purple 
     grid-template-rows: none;
     gap: 1rem;
   }
-}
-  .portal__hint { animation: none; }
-  .stamp, .stamp::after, .stamp__tag { transition: none; }
 }
 
 /* ====================================================================
