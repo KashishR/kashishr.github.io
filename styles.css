@@ -1564,6 +1564,15 @@ body.project-page.proj-senseglove        { --page-accent: #6B3FA0; }  /* purple 
   border-top: 1px solid rgba(26, 26, 26, 0.08);
 }
 
+/* Back-to-work + next-project links, side by side */
+.project-footer__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  flex-wrap: wrap;
+}
+
 /* Small muted footer line — consistent on all project pages */
 .project-foot-note {
   margin-top: 1.5rem;
