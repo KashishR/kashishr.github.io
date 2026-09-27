@@ -771,6 +771,16 @@ body.entered.hero-locked {
 .work-gallery__item:focus-visible .work-gallery__ph {
   transform: scale(1.05);
 }
+/* Finance Ecosystem thumbnail: source image has generous dark padding
+   around the phone mockups, so zoom in a bit more than the default cover
+   crop to make the phones read bigger within the tile. */
+.work-gallery__item--zoom .work-gallery__media img {
+  transform: scale(1.18);
+}
+.work-gallery__item--zoom:hover .work-gallery__media img,
+.work-gallery__item--zoom:focus-visible .work-gallery__media img {
+  transform: scale(1.25);
+}
 .work-gallery__media--contain img {
   object-fit: contain;
   background: var(--card);
